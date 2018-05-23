@@ -5,12 +5,20 @@ import Select from 'react-select';
 import 'react-select/dist/react-select.css';
 import { observer } from "mobx-react"
 import { observable } from "mobx"
+import {
+  serialize,
+  deserialize,
+  serializable,
+  primitive,
+  object,
+  createSimpleSchema
+} from 'serializr';
 
 const capitalizeFirstLetter = (string) =>
   string.charAt(0).toUpperCase() + string.slice(1);
 
 const ValuePicker = ({ selectedOptions, options, handleValueChange, type }) =>
-  <div className="select-row">
+  <div className={`select-row select-row-${type}`}>
     <label>
       {capitalizeFirstLetter(type)}
     </label>
@@ -26,12 +34,22 @@ const ValuePicker = ({ selectedOptions, options, handleValueChange, type }) =>
     </div>
   </div>
 
+const optionSchema = createSimpleSchema({
+  value: primitive(),
+  label: primitive()
+});
+
+const selectedOptionsSchema = createSimpleSchema({
+  country: object(optionSchema),
+  currency: object(optionSchema)
+});
+
 @observer class App extends Component {
 
-  @observable selectedOptions = {
+  @observable @serializable selectedOptions = {
     country: null,
-    currency: null
-  }
+    currency: null,
+  };
 
   constructor(props) {
     super(props);
@@ -40,6 +58,12 @@ const ValuePicker = ({ selectedOptions, options, handleValueChange, type }) =>
       countries: [],
       currencies: []
     };
+
+    const storedOptions = localStorage.getItem('selectedOptions');
+    if (storedOptions) {
+      this.selectedOptions = deserialize(selectedOptionsSchema, JSON.parse(storedOptions))
+    }
+
   }
 
   async componentDidMount() {
@@ -67,26 +91,27 @@ const ValuePicker = ({ selectedOptions, options, handleValueChange, type }) =>
     const handleValueChange = (type) => (selectedOption) => {
 
       let newOptions = {
-        ...selectedOptions,
+        ...this.selectedOptions,
         [type]: selectedOption
       }
 
       if (type === 'country') {
         try {
           const currencyId = this.state.countries
-            .find(e => e._id === selectedOption.value)
+            .filter(e => e._id === selectedOption.value)[0]
             .preferredCurrency.id;
 
-          newOptions.currency = currencyOptions.find(e => e.value === currencyId)
+          newOptions.currency = currencyOptions.filter(e => e.value === currencyId)[0]
 
         } catch (e) {
           console.log(e);
         }
       }
+ 
+      localStorage.setItem('selectedOptions',
+        JSON.stringify(serialize(selectedOptionsSchema, newOptions)));
 
-      selectedOptions = newOptions;
-
-      //this.setState({ selectedOptions: { ...this.state.selectedOptions, ...newOptions } });
+      this.selectedOptions = newOptions;
 
       console.log(`Selected ${type}: ${selectedOption.label}`);
     }
@@ -97,13 +122,13 @@ const ValuePicker = ({ selectedOptions, options, handleValueChange, type }) =>
           <ValuePicker
             type="country"
             handleValueChange={handleValueChange}
-            selectedOptions={store}
+            selectedOptions={this.selectedOptions}
             options={countryOptions}>
           </ValuePicker>
           <ValuePicker
             type="currency"
             handleValueChange={handleValueChange}
-            selectedOptions={store}
+            selectedOptions={this.selectedOptions}
             options={currencyOptions}>
           </ValuePicker>
         </div>
