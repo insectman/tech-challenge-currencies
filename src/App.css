@@ -1,0 +1,103 @@
+.no-select {
+  user-select: none;
+}
+
+.main-wrapper {
+  width: 284px;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 40px 31px 40px 35px;
+  font-family: OpenSans;
+}
+
+.select-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.select-row  label {
+  line-height: 49px;
+  font-weight: 600;
+  font-size: 13px;
+  font-style: normal;
+  font-stretch: normal;
+  letter-spacing: normal;
+  text-align: left;
+  color: #808080;
+}
+
+.select-wrapper {
+  margin-left: auto;
+  vertical-align: middle;
+  font-family: OpenSans;
+  font-size: 13px;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 1.69;
+  letter-spacing: normal;
+  text-align: left;
+  color: #4a4a4a;
+  width: 155px;
+  padding-left: 11px;
+  height: 49px;
+  border-radius: 5px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
+  appearance: none;
+  background: url('/arrow.png') no-repeat right center #f5fbfc;
+  border-color:  transparent;
+  border-right: 12px solid transparent;
+  background-size: 9px 6px;
+}
+
+
+/*--------------override react-select CSS-------------------------*/
+
+.select-wrapper .Select, 
+.select-wrapper .Select-control, 
+.select-wrapper .Select-value,
+.select-wrapper .Select-value span,
+.select-wrapper .Select-input{
+  height: 49px;
+}
+
+.select-wrapper .Select-input input {
+  height: 33px;
+}
+
+.select-wrapper .Select.is-focused > .Select-control {
+  border: none;
+  background: none;
+}
+
+.select-wrapper .Select.is-focused:not(.is-open) > .Select-control {
+  border: none;
+  background: none;
+  webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+.select-wrapper .Select-value span {
+  line-height: 49px
+}
+
+.select-wrapper .Select-control, 
+.select-wrapper .Select-control:hover,
+.select-wrapper .Select-menu-outer {
+  border: none;
+  background: none;
+  webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+.select-wrapper .Select-menu-outer {
+  min-width: 178px;
+}
+
+.select-wrapper .Select-arrow-zone, .select-wrapper .Select-clear-zone {
+  display: none;
+}
